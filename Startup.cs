@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ChatApp.Services;
+using ChatApp.Hubs;
 
 namespace ChatApp
 {
