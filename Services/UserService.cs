@@ -23,6 +23,9 @@ namespace ChatApp.Services
         public User Get(string id) =>
             _users.Find<User>(user => user.Id == id).FirstOrDefault();
 
+        public User GetByUsername(string username) =>
+            _users.Find<User>(user => user.Username == username).FirstOrDefault();
+
         public User Create(User user)
         {
             _users.InsertOne(user);

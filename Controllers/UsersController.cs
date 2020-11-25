@@ -37,11 +37,27 @@ namespace ChatApp.Controllers
         }
 
         [HttpPost("add")]
-        public ActionResult<User> Create(User book)
+        public ActionResult<User> Create(User user)
         {
-            _userService.Create(book);
+            _userService.Create(user);
 
-            return CreatedAtRoute("GetUser", new { id = book.Id.ToString() }, book);
+            return CreatedAtRoute("GetUser", new { id = user.Id.ToString() }, user);
+        }
+
+        [HttpPost("verifyAccount")]
+        public ActionResult verify(User user)
+        {
+
+            var userFound = _userService.GetByUsername(user.Username);
+
+            if (userFound.Password.Equals(user.Password))
+            {
+                return CreatedAtRoute("GetUser", new { id = userFound.Id.ToString() }, userFound);
+            }else {
+                return BadRequest();
+            }
+
+            
         }
     }
 }
