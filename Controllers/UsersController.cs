@@ -49,7 +49,6 @@ namespace ChatApp.Controllers
         {
 
             var userFound = _userService.GetByUsername(user.Username);
-
             if (userFound.Password.Equals(user.Password))
             {
                 return CreatedAtRoute("GetUser", new { id = userFound.Id.ToString() }, userFound);
