@@ -15,11 +15,12 @@ namespace ChatApp.Hubs
 
         private readonly UserService _userService;
         private readonly RoomServices _roomService;
-
-        public ChatHub(UserService userService, RoomServices roomService)
+        private readonly MessageServices _messageService;
+        public ChatHub(UserService userService, RoomServices roomService, MessageServices messageService)
         {
             _userService = userService;
             _roomService = roomService;
+            _messageService = messageService;
         }
 
         
