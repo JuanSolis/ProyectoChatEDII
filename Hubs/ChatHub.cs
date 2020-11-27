@@ -14,17 +14,15 @@ namespace ChatApp.Hubs
         public string connectionId = "";
 
         private readonly UserService _userService;
+        private readonly RoomServices _roomService;
 
-        public ChatHub(UserService userService)
+        public ChatHub(UserService userService, RoomServices roomService)
         {
             _userService = userService;
+            _roomService = roomService;
         }
 
-        public override Task OnConnectedAsync()
-        {
-
-            return base.OnConnectedAsync();
-        }
+        
 
         public async Task insertConnectionToUser(User user)
         {
@@ -51,12 +49,30 @@ namespace ChatApp.Hubs
         }
 
 
-        public async Task CreateRoom(string roomName)
+        public async Task CreateRoom(User from, User to)
         {
             // Create and save chat room in database
+            List<Room> rooms = _roomService.Get();
+            Room roomFound = _roomService.Get(from.Id + to.Id);
+            Room roomBidirectional = _roomService.Get(to.Id + from.Id);
 
-
-            await Clients.All.SendAsync("addChatRoom");
+            if (roomBidirectional != null)
+            {
+                await Clients.Caller.SendAsync("getCurrentRoom", roomBidirectional, to);
+            }
+            else {
+                if (roomFound == null)
+                {
+                    Room newRoom = new Room();
+                    newRoom.IdRoom = from.Id + to.Id;
+                    _roomService.Create(newRoom);
+                    await Clients.Caller.SendAsync("getCurrentRoom", newRoom, to);
+                }
+                else {
+                    await Clients.Caller.SendAsync("getCurrentRoom", roomFound, to);
+                }
+            }
+            
         }
     }
         public static class ConnectedUsers

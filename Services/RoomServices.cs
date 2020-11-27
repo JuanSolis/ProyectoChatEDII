@@ -18,6 +18,10 @@ namespace ChatApp.Services
             _room = database.GetCollection<Room>(settings.RoomsCollectionName);
 
         }
+        public Room Get(string id) =>
+            _room.Find<Room>(room => room.IdRoom == id).FirstOrDefault();
+
+        public List<Room> Get() => _room.Find(room => true).ToList();
 
         public Room Create(Room room)
         {

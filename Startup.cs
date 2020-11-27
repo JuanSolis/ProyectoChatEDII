@@ -43,9 +43,9 @@ namespace ChatApp
             services.Configure<ChatAppDatabaseSettings>(Configuration.GetSection(nameof(ChatAppDatabaseSettings)));
 
             services.AddSingleton<IChatAppDatabaseSettings>(sp => sp.GetRequiredService<IOptions<ChatAppDatabaseSettings>>().Value);
-
-            services.AddSingleton<UserService>();
             services.AddSingleton<RoomServices>();
+            services.AddSingleton<UserService>();
+            
             services.AddControllers();
 
             services.AddSignalR();
