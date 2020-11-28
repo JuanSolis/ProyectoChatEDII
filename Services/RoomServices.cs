@@ -28,5 +28,9 @@ namespace ChatApp.Services
             _room.InsertOne(room);
             return room;
         }
+
+        public async void Update(Room roomToUpdate, Room updatedRoom) {
+           await _room.ReplaceOneAsync(r => r.IdRoom.Equals(roomToUpdate.IdRoom), updatedRoom, new UpdateOptions { IsUpsert = true });
+        }
     }
 }

@@ -59,22 +59,89 @@ namespace ChatApp.Hubs
 
             if (roomBidirectional != null)
             {
-                await Clients.Caller.SendAsync("getCurrentRoom", roomBidirectional, to);
+                await Clients.Caller.SendAsync("getCurrentRoom", roomBidirectional, to, from);
             }
             else {
                 if (roomFound == null)
                 {
                     Room newRoom = new Room();
                     newRoom.IdRoom = from.Id + to.Id;
+                    newRoom.chatMessages = new List<Message>();
                     _roomService.Create(newRoom);
-                    await Clients.Caller.SendAsync("getCurrentRoom", newRoom, to);
+                    await Clients.Caller.SendAsync("getCurrentRoom", newRoom, to, from);
                 }
                 else {
-                    await Clients.Caller.SendAsync("getCurrentRoom", roomFound, to);
+                    await Clients.Caller.SendAsync("getCurrentRoom", roomFound, to, from);
                 }
             }
             
         }
+
+        public async Task SendMessage(Message message) {
+
+            _messageService.Create(message);
+
+            var room = _roomService.Get(message.room);
+            room.chatMessages.Add(message);
+
+             _roomService.Update(room, room);
+
+            ////Caller
+            await Clients.Group(message.room).SendAsync("Messages", room.chatMessages);
+        }
+
+        public List<Message> DechyperMessage(List<Message> messageList)
+        {
+
+            //_messageService.Create(message);
+
+            //var room = _roomService.Get(message.room);
+            //room.chatMessages.Add(message);
+
+            //_roomService.Update(room, room);
+
+            return messageList;
+        }
+
+        public async Task GetRoomMessages(string idRoom) {
+
+            var room = _roomService.Get(idRoom);
+            //Caller
+            //Clients.Caller.SendAsync("GetMessages", room.chatMessages);
+            await Clients.Group(idRoom).SendAsync("Messages", room.chatMessages);
+        }
+
+
+        public async Task JoinRoom(Room lastRoom, Room room)
+        {
+
+            // Join to new chat room
+            if (lastRoom != null)
+            {
+                if (lastRoom.IdRoom != room.IdRoom)
+                {
+                    await Leave(lastRoom.IdRoom);
+                    await Groups.AddToGroupAsync(Context.ConnectionId, room.IdRoom);
+                    await Clients.Caller.SendAsync("getLastRoom", room);
+                }else
+                {
+                    await Groups.AddToGroupAsync(Context.ConnectionId, room.IdRoom);
+                    await Clients.Caller.SendAsync("getLastRoom", room);
+
+                }
+            }
+            else {
+                await Groups.AddToGroupAsync(Context.ConnectionId, room.IdRoom);
+                await Clients.Caller.SendAsync("getLastRoom", room);
+            }
+           
+        }
+
+        public async Task Leave(string roomName)
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomName);
+        }
+
     }
         public static class ConnectedUsers
     {

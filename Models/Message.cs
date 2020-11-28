@@ -10,6 +10,7 @@ namespace ChatApp.Models
     public class Message
     {
         [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
         public string SenderUser { get; set; }
@@ -20,6 +21,7 @@ namespace ChatApp.Models
 
         public string room { get; set; }
 
+        public string content { get; set; }
 
     }
 }
