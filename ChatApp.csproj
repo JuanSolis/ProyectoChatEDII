@@ -8,5 +8,17 @@
     <PackageReference Include="MongoDB.Driver" Version="2.11.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="CifradoCesar">
+      <HintPath>Dlls\CifradoCesar.dll</HintPath>
+    </Reference>
+    <Reference Include="Diffie-Hellman">
+      <HintPath>Dlls\Diffie-Hellman.dll</HintPath>
+    </Reference>
+    <Reference Include="SDES">
+      <HintPath>Dlls\SDES.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 
 </Project>

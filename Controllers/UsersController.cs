@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ChatApp.Services;
 using ChatApp.Models;
+using CifradoCesar;
 
 namespace ChatApp.Controllers
 {
@@ -39,22 +40,51 @@ namespace ChatApp.Controllers
         [HttpPost("add")]
         public ActionResult<User> Create(User user)
         {
-            _userService.Create(user);
+            Cesar cifrarPassword = new Cesar();
 
-            return CreatedAtRoute("GetUser", new { id = user.Id.ToString() }, user);
+            string passsCifrada = cifrarPassword.Cifrar(user.Password);
+
+            var result = _userService.GetByUsername(user.Username);
+
+            if (result == null)
+            {
+                user.Password = passsCifrada;
+                _userService.Create(user);
+                return CreatedAtRoute("GetUser", new { id = user.Id.ToString() }, user);
+            }
+            else {
+                return BadRequest();
+            }
+            
+
+            
         }
 
         [HttpPost("verifyAccount")]
         public ActionResult verify(User user)
         {
-
+            Cesar descifrar = new Cesar();
             var userFound = _userService.GetByUsername(user.Username);
-            if (userFound.Password.Equals(user.Password))
+
+            string passDescif = descifrar.Cifrar(user.Password);
+
+
+
+            if (userFound != null)
             {
-                return CreatedAtRoute("GetUser", new { id = userFound.Id.ToString() }, userFound);
-            }else {
+                if (userFound.Password.Equals(passDescif))
+                {
+                    return CreatedAtRoute("GetUser", new { id = userFound.Id.ToString() }, userFound);
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            else {
                 return BadRequest();
             }
+            
 
             
         }

@@ -31,3 +31,6 @@ C:\jasolis\c#\ChatApp\obj\Debug\netcoreapp3.1\ChatApp.genruntimeconfig.cache
 C:\jasolis\c#\ChatApp\bin\Debug\netcoreapp3.1\frontend_app\package-lock.json
 C:\jasolis\c#\ChatApp\bin\Debug\netcoreapp3.1\frontend_app\package.json
 C:\jasolis\c#\ChatApp\bin\Debug\netcoreapp3.1\frontend_app\public\manifest.json
+C:\jasolis\c#\ChatApp\bin\Debug\netcoreapp3.1\CifradoCesar.dll
+C:\jasolis\c#\ChatApp\bin\Debug\netcoreapp3.1\Diffie-Hellman.dll
+C:\jasolis\c#\ChatApp\bin\Debug\netcoreapp3.1\SDES.dll

@@ -23,5 +23,7 @@ namespace ChatApp.Models
 
         public string content { get; set; }
 
+        public string salt { get; set; }
+
     }
 }
