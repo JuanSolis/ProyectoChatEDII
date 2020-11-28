@@ -31,5 +31,11 @@ namespace ChatApp.Services
             _users.InsertOne(user);
             return user;
         }
+
+        public async void Update(User userToUpdate, User updatedUser)
+        {
+            await _users.ReplaceOneAsync(r => r.Id.Equals(userToUpdate.Id), updatedUser, new UpdateOptions { IsUpsert = true });
+        }
+
     }
 }

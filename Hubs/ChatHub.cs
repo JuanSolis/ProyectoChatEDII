@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using ChatApp.Models;
 using ChatApp.Services;
+using Diffie_Hellman;
+using SDES;
 
 namespace ChatApp.Hubs
 {
@@ -24,7 +26,7 @@ namespace ChatApp.Hubs
         }
 
         
-
+        
         public async Task insertConnectionToUser(User user)
         {
 
@@ -52,6 +54,18 @@ namespace ChatApp.Hubs
 
         public async Task CreateRoom(User from, User to)
         {
+            DiffieHellmanKey diffie = new DiffieHellmanKey();
+            diffie.DiffleHellmanKey();
+
+            from.n =  diffie.generarNum1();
+
+            _userService.Update(from, from);
+
+            to.n = diffie.generarNum2();
+
+            _userService.Update(to, to);
+    
+            
             // Create and save chat room in database
             List<Room> rooms = _roomService.Get();
             Room roomFound = _roomService.Get(from.Id + to.Id);
@@ -79,6 +93,18 @@ namespace ChatApp.Hubs
 
         public async Task SendMessage(Message message) {
 
+            DiffieHellmanKey diffie = new DiffieHellmanKey();
+
+            diffie.DiffleHellmanKey();
+
+            CifradoSDES sdesClass = new CifradoSDES();
+
+            User userEntry = _userService.GetByUsername(message.SenderUser);
+
+            string cypher = sdesClass.Cifrar(message.content, diffie.ObtenerLlave(userEntry.n));
+
+            message.content = cypher;
+
             _messageService.Create(message);
 
             var room = _roomService.Get(message.room);
@@ -92,13 +118,29 @@ namespace ChatApp.Hubs
 
         public List<Message> DechyperMessage(List<Message> messageList)
         {
+            if (messageList.Count > 0)
+            {
+                
+                foreach (Message msg in messageList)
+                {
+                    DiffieHellmanKey diffie = new DiffieHellmanKey();
 
-            //_messageService.Create(message);
+                    diffie.DiffleHellmanKey();
 
-            //var room = _roomService.Get(message.room);
-            //room.chatMessages.Add(message);
+                    CifradoSDES sdesClass = new CifradoSDES();
+                    User userEntry = _userService.GetByUsername(messageList[0].SenderUser);
+                    string decypher = "";
+                    decypher = sdesClass.Descifrar(msg.content, diffie.ObtenerLlave(userEntry.n));
+                    msg.content = decypher;
+                }
 
-            //_roomService.Update(room, room);
+                //_messageService.Create(message);
+
+                //var room = _roomService.Get(message.room);
+                //room.chatMessages.Add(message);
+
+                //_roomService.Update(room, room);
+            }
 
             return messageList;
         }
